@@ -67,7 +67,10 @@ latest_dir.mkdir(parents=True, exist_ok=True)
 for raw_file in csv_files:
     # Read everything as text so codes like 012345 keep their leading zeros.
     # utf-8-sig quietly handles the invisible marker some exports start with.
-    df = pd.read_csv(raw_file, dtype=str, keep_default_na=False, encoding="utf-8-sig", header = 1)
+    df = pd.read_csv(raw_file, dtype=str, keep_default_na=False, encoding="utf-8", header = 1)
+
+    # Strip Excel's ="000190" text wrapper, leaving 000190
+    df = df.replace(r'^="(.*)"$', r'\1', regex=True)
 
     df.insert(0, "source_file", raw_file.name)
     df.insert(1, "retrieved_date", SNAPSHOT_DATE)
